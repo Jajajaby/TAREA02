@@ -28,6 +28,11 @@ def detail(request, player_id):
 
     return render(request, template_name, data)
 
+def delete(request,player_rut):
+    p = Player.objects.get(rut=player_rut)
+    p.delete()
+    return redirect("player_list2")
+
 
 def add(request):
     data = {}
@@ -43,15 +48,29 @@ def add(request):
     else:
         data['form'] = PlayerForm()
 
- 
+
     template_name = 'player/agregar.html'
-    return render(request, template_name)
+    return render(request, template_name,data)
 
+def update(request,player_rut):
+    data = {}
+    player = Player.objects.get(rut=player_rut)
+    if request.method == "GET":
+        data['form'] = PlayerForm(instance=player)
+    else:
+        data['form']= PlayerForm(request.POST,request.FILES, instance=player)
+        p = data['form']
+        if p.is_valid():
+            p.save()
+        return redirect("player_list2")
+    template_name = 'player/agregar.html'
+    return render(request,template_name,data)
 
+    
 def list2(request):
-
+    data = {}
     template_name = 'player/listar.html'
-
+    data['list_player'] = Player.objects.all()
     # import pdb;pdb.set_trace()
 
-    return render(request, template_name)
+    return render(request, template_name,data)
